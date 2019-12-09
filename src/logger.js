@@ -1,15 +1,17 @@
 const winston = require("winston");
 const drf = require("winston-daily-rotate-file");
 
-const logger = winston.createLogger({
+export var logger = winston.createLogger({
   transports: [
     new winston.transports.Console({
+      name: "console",
       format: winston.format.combine(
         winston.format.colorize(),
         winston.format.simple()
       )
     }),
     new drf({
+      name: "drf",
       filename: "prodvis-%DATE%.log",
       dirname: "logs",
       datePattern: "YYYY-MM-DD-HH",
@@ -27,5 +29,3 @@ const logger = winston.createLogger({
     })
   ]
 });
-
-module.exports = logger;

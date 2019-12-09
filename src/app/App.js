@@ -1,12 +1,15 @@
-const express = require("express");
-const logger = require("../logger");
-const SqlService = require("../services/SqlService");
+import express from "express";
+import { logger } from "../logger";
+import { SqlService, SQLTypes } from "../services/SqlService";
+import bodyParser from "body-parser";
+import { UserController } from "./controller/userController";
 
-class App {
+export class App {
   constructor() {
+    this.sqlService = new SqlService(false);
+    this.uController = new UserController();
     this.express = express();
     this.mountRoutes();
-    this.sqlService = new SqlService(false);
   }
 
   mountRoutes() {
@@ -24,29 +27,86 @@ class App {
     });
 
     router.post("/query", async (req, res) => {
-      let data = await this.sqlService.executeSql(req.body).catch(err => {
-        logger.error(`Error querying database: ${err}`);
-        res.status(500);
+      const query = req.body;
+      if (this.sqlService.checkSqlStatement(SQLTypes.SELECT, query)) {
+        let data = await this.sqlService.executeSql(query).catch(err => {
+          logger.error(`Error querying database: ${err}`);
+          res.status(500);
+          res.end();
+        });
+        if (data) res.json(data);
+      } else {
+        logger.error(
+          `Error unsupported SQL Statement: ${query.substring(0, 6)}`
+        );
+        res.status(501);
         res.end();
-      });
-      if (data) res.json(data);
+      }
     });
     router.post("/update", async (req, res) => {
-      let data = await this.sqlService.executeSql(req.body).catch(err => {
-        logger.error(`Error querying database: ${err}`);
-        res.status(500);
+      const query = req.body;
+      if (this.sqlService.checkSqlStatement(SQLTypes.UPDATE, query)) {
+        let data = await this.sqlService.executeSql(query).catch(err => {
+          logger.error(`Error querying database: ${err}`);
+          res.status(500);
+          res.end();
+        });
+        if (data) res.json(data);
+      } else {
+        logger.error(
+          `Error unsupported SQL Statement: ${query.substring(0, 6)}`
+        );
+        res.status(501);
         res.end();
-      });
-      if (data) res.json(data);
+      }
     });
     router.post("/insert", async (req, res) => {
-      let data = await this.sqlService.executeSql(req.body).catch(err => {
-        logger.error(`Error querying database: ${err}`);
-        res.status(500);
+      const query = req.body;
+      if (this.sqlService.checkSqlStatement(SQLTypes.INSERT, query)) {
+        let data = await this.sqlService.executeSql(query).catch(err => {
+          logger.error(`Error querying database: ${err}`);
+          res.status(500);
+          res.end();
+        });
+        if (data) res.json(data);
+      } else {
+        logger.error(
+          `Error unsupported SQL Statement: ${query.substring(0, 6)}`
+        );
+        res.status(501);
         res.end();
-      });
-      if (data) res.json(data);
+      }
     });
+    router.post("/delete", async (req, res) => {
+      const query = req.body;
+      if (this.sqlService.checkSqlStatement(SQLTypes.DELETE, query)) {
+        let data = await this.sqlService.executeSql(query).catch(err => {
+          logger.error(`Error querying database: ${err}`);
+          res.status(500);
+          res.end();
+        });
+        if (data) res.json(data);
+      } else {
+        logger.error(
+          `Error unsupported SQL Statement: ${query.substring(0, 6)}`
+        );
+        res.status(501);
+        res.end();
+      }
+    });
+    this.express.use("/sql", router);
+
+    const authRouter = express.Router();
+    authRouter.route("/users").post(this.uController.add);
+    authRouter.route("/login").post(this.uController.login);
+    this.express.use("/", authRouter);
+
+    this.express.use(bodyParser.json());
+    this.express.use(
+      bodyParser.urlencoded({
+        extended: true
+      })
+    );
 
     this.express.use(function(req, res, next) {
       var data = "";
@@ -60,9 +120,7 @@ class App {
         next();
       });
     });
-    this.express.use("/sql", router);
+
     logger.debug("Routes mounted!");
   }
 }
-
-module.exports = App;
