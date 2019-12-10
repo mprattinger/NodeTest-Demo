@@ -13,8 +13,11 @@
         "--timeout",
         "999999",
         "--colors",
+        "-r",
+        "esm",
         "${workspaceFolder}\\tests\\**\\*.test.js"
       ],
+      "env": { "JWT_KEY": "WinterIsComingGOT2019" },
       "internalConsoleOptions": "openOnSessionStart",
       "skipFiles": ["<node_internals>/**"]
     },
@@ -22,8 +25,9 @@
       "type": "node",
       "request": "launch",
       "name": "Launch Program",
-      "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}\\src\\index.js"
+      "env": { "JWT_KEY": "WinterIsComingGOT2019" },
+      "args": ["-r", "esm", "${workspaceFolder}\\src\\index.js"],
+      "skipFiles": ["<node_internals>/**"]
     }
   ]
 }

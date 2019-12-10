@@ -1,68 +1,46 @@
-const express = require("express");
-const logger = require("../logger");
-const SqlService = require("../services/SqlService");
+import express from "express";
+import { logger } from "../logger";
+import { SqlService, SQLTypes } from "./services/SqlService";
+import bodyParser from "body-parser";
+import { UserController } from "./controller/userController";
+import { MyRouter } from "./routes";
 
-class App {
+export class App {
   constructor() {
-    this.express = express();
-    this.mountRoutes();
     this.sqlService = new SqlService(false);
+    //this.uController = new UserController();
+    this.express = express();
+    this.router = express.Router();
+    this.setupApi();
   }
 
-  mountRoutes() {
-    const router = express.Router();
-    logger.debug("Mounting routes...");
-    router.get("/", (req, res) => {
-      res.write("Hello World!");
-      res.status(200);
-      res.end();
-    });
-    router.get("/ping", (req, res) => {
-      res.write("pong");
-      res.status(200);
-      res.end();
-    });
+  setupApi() {
+    this.express.use(
+      bodyParser.urlencoded({
+        extended: true
+      })
+    );
 
-    router.post("/query", async (req, res) => {
-      let data = await this.sqlService.executeSql(req.body).catch(err => {
-        logger.error(`Error querying database: ${err}`);
-        res.status(500);
-        res.end();
-      });
-      if (data) res.json(data);
-    });
-    router.post("/update", async (req, res) => {
-      let data = await this.sqlService.executeSql(req.body).catch(err => {
-        logger.error(`Error querying database: ${err}`);
-        res.status(500);
-        res.end();
-      });
-      if (data) res.json(data);
-    });
-    router.post("/insert", async (req, res) => {
-      let data = await this.sqlService.executeSql(req.body).catch(err => {
-        logger.error(`Error querying database: ${err}`);
-        res.status(500);
-        res.end();
-      });
-      if (data) res.json(data);
-    });
+    // this.express.use(function(req, res, next) {
+    //   var data = "";
+    //   req.setEncoding("utf8");
+    //   req.on("data", function(chunk) {
+    //     data += chunk;
+    //   });
 
-    this.express.use(function(req, res, next) {
-      var data = "";
-      req.setEncoding("utf8");
-      req.on("data", function(chunk) {
-        data += chunk;
-      });
+    //   req.on("end", function() {
+    //     req.body = data;
+    //     next();
+    //   });
+    // });
 
-      req.on("end", function() {
-        req.body = data;
-        next();
-      });
-    });
-    this.express.use("/sql", router);
-    logger.debug("Routes mounted!");
+    this.express.use(
+      bodyParser.urlencoded({
+        extended: true
+      })
+    );
+    this.express.use(bodyParser.json());
+
+    this.express.use("/api/v1", MyRouter(this.router));
   }
 }
-
-module.exports = App;

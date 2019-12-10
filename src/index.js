@@ -1,5 +1,5 @@
-const logger = require("./logger");
-const App = require("./app/App");
+import { logger } from "./logger";
+import { App } from "./app/App";
 
 logger.info("Application starting...");
 

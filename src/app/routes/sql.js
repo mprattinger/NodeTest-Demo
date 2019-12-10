@@ -1,0 +1,17 @@
+import { SqlController } from "../controller/sqlController";
+
+export function SqlRoutes(router) {
+  const sqlController = new SqlController();
+  router
+    .route("/sql/query")
+    .post(async (req, res) => await sqlController.query(req, res));
+  router
+    .route("/sql/insert")
+    .post(async (req, res) => await sqlController.insert(req, res));
+  router
+    .route("/sql/update")
+    .post(async (req, res) => await sqlController.update(req, res));
+  router
+    .route("/sql/delete")
+    .post(async (req, res) => await sqlController.delete(req, res));
+}
