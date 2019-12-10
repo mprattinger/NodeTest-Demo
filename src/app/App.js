@@ -4,6 +4,7 @@ import { SqlService, SQLTypes } from "./services/SqlService";
 import bodyParser from "body-parser";
 import { UserController } from "./controller/userController";
 import { MyRouter } from "./routes";
+import passport from "passport";
 
 export class App {
   constructor() {
@@ -11,6 +12,7 @@ export class App {
     //this.uController = new UserController();
     this.express = express();
     this.router = express.Router();
+    this.express.use(passport.initialize());
     this.setupApi();
   }
 
