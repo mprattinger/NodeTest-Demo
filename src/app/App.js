@@ -20,21 +20,27 @@ export class App {
         extended: true
       })
     );
+
+    // this.express.use(function(req, res, next) {
+    //   var data = "";
+    //   req.setEncoding("utf8");
+    //   req.on("data", function(chunk) {
+    //     data += chunk;
+    //   });
+
+    //   req.on("end", function() {
+    //     req.body = data;
+    //     next();
+    //   });
+    // });
+
+    this.express.use(
+      bodyParser.urlencoded({
+        extended: true
+      })
+    );
     this.express.use(bodyParser.json());
 
     this.express.use("/api/v1", MyRouter(this.router));
-
-    this.express.use(function(req, res, next) {
-      var data = "";
-      req.setEncoding("utf8");
-      req.on("data", function(chunk) {
-        data += chunk;
-      });
-
-      req.on("end", function() {
-        req.body = data;
-        next();
-      });
-    });
   }
 }

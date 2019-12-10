@@ -1,4 +1,5 @@
 import { SqlService, SQLTypes } from "../services/SqlService";
+import { logger } from "../../logger";
 
 export class SqlController {
   constructor() {

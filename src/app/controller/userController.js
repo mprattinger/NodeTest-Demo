@@ -1,21 +1,28 @@
-import { UserModel } from "../models/userModel";
+import { UserModel, UserRoles } from "../models/userModel";
+import jsonwebtoken from "jsonwebtoken";
+import randToken from "rand-token";
 
 export class UserController {
+  constructor() {
+    this.refreshTokens = [];
+  }
   add(req, res) {}
   login(req, res) {
     let result = {};
     let status = 200;
-    const { name, password } = req.body;
-    if (name === "mprattinge" && password === "M_P2ttix") {
-      result.status = status;
-      let user = new UserModel();
-      user.userName = name;
-      result.result = user;
+    const { username, password } = req.body;
+    let user = {};
+    user.userName = username;
+    if (user.userName.toUpperCase() === "MPRATTINGE") {
+      user.role = UserRoles.ADMIN;
     } else {
-      status = 401;
-      result.status = status;
-      result.error = "Authentication error";
+      user.role = UserRoles.USER;
     }
-    res.status(status).send(result);
+    let token = jsonwebtoken.sign(user, process.env.JWT_KEY, {
+      expiresIn: 300
+    });
+    let refreshToken = randToken.uid(256);
+    this.refreshTokens[refreshToken] = username;
+    res.json({ token: "JWT " + token, refreshToken: refreshToken });
   }
 }

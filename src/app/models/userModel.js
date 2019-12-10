@@ -1,8 +1,24 @@
-export class UserModel {
-  constructor() {
-    this.userName = "";
-    this.password = "";
+import { BaseModel } from "./baseModel";
+
+export class UserRoles {
+  static get ADMIN() {
+    return "admin";
   }
 
-  add(userName, password) {}
+  static get USER() {
+    return "user";
+  }
+
+  static get GUEST() {
+    return "guest";
+  }
+}
+
+export class UserModel extends BaseModel {
+  constructor() {
+    super();
+    this.userName = "";
+    //this.password = "";
+    this.role = UserRoles.GUEST;
+  }
 }

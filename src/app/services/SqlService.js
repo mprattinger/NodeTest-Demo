@@ -25,7 +25,7 @@ export class SqlService {
 
   async executeSql(sql) {
     logger.info(`Requested to execute the sql statement ${sql}`);
-    const results = await this.pool.runSql(sql);
+    const results = []; //const results = await this.pool.runSql(sql);
     logger.debug(`SQL Query Result: ${JSON.stringify(results)}`);
     return results;
   }
