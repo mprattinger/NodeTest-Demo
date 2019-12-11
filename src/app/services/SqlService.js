@@ -1,5 +1,6 @@
 import { logger } from "../../logger";
 import { SQLTypes } from "../models/sqlTypes";
+import { UserRoles } from "../models/userRoles";
 
 export class SqlService {
   constructor(pool) {
@@ -31,6 +32,22 @@ export class SqlService {
         break;
       default:
         break;
+    }
+    return ret;
+  }
+
+  static checkAuthorization(sqlType, user) {
+    let ret = false;
+    if (
+      sqlType === SQLTypes.INSERT ||
+      sqlType === SQLTypes.UPDATE ||
+      sqlType === SQLTypes.DELETE
+    ) {
+      // Nur Admins dürfen diese SQL Befehle ausführen
+      if (user.role === UserRoles.ADMIN) ret = true;
+      else ret = false;
+    } else {
+      ret = true;
     }
     return ret;
   }
