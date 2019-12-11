@@ -1,5 +1,3 @@
-import { BaseModel } from "./baseModel";
-
 export class UserRoles {
   static get ADMIN() {
     return "admin";
@@ -14,9 +12,8 @@ export class UserRoles {
   }
 }
 
-export class UserModel extends BaseModel {
+export class UserModel {
   constructor() {
-    super();
     this.userName = "";
     //this.password = "";
     this.role = UserRoles.GUEST;

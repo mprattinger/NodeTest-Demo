@@ -1,5 +1,6 @@
 import { SqlService, SQLTypes } from "../services/SqlService";
 import { logger } from "../../logger";
+import httpStatus from "http-status";
 
 export class SqlController {
   constructor() {
@@ -11,13 +12,13 @@ export class SqlController {
     if (this.sqlService.checkSqlStatement(SQLTypes.SELECT, query)) {
       let data = await this.sqlService.executeSql(query).catch(err => {
         logger.error(`Error querying database: ${err}`);
-        res.status(500);
+        res.status(httpStatus.INTERNAL_SERVER_ERROR);
         res.end();
       });
-      if (data) res.json(data);
+      if (data) res.status(httpStatus.OK).json(data);
     } else {
       logger.error(`Error unsupported SQL Statement: ${query.substring(0, 6)}`);
-      res.status(501);
+      res.status(httpStatus.BAD_REQUEST);
       res.end();
     }
   }
@@ -26,13 +27,13 @@ export class SqlController {
     if (this.sqlService.checkSqlStatement(SQLTypes.UPDATE, query)) {
       let data = await this.sqlService.executeSql(query).catch(err => {
         logger.error(`Error querying database: ${err}`);
-        res.status(500);
+        res.status(httpStatus.INTERNAL_SERVER_ERROR);
         res.end();
       });
-      if (data) res.json(data);
+      if (data) res.status(httpStatus.OK).json(data);
     } else {
       logger.error(`Error unsupported SQL Statement: ${query.substring(0, 6)}`);
-      res.status(501);
+      res.status(httpStatus.BAD_REQUEST);
       res.end();
     }
   }
@@ -41,13 +42,13 @@ export class SqlController {
     if (this.sqlService.checkSqlStatement(SQLTypes.INSERT, query)) {
       let data = await this.sqlService.executeSql(query).catch(err => {
         logger.error(`Error querying database: ${err}`);
-        res.status(500);
+        res.status(httpStatus.INTERNAL_SERVER_ERROR);
         res.end();
       });
-      if (data) res.json(data);
+      if (data) res.status(httpStatus.OK).json(data);
     } else {
       logger.error(`Error unsupported SQL Statement: ${query.substring(0, 6)}`);
-      res.status(501);
+      res.status(httpStatus.BAD_REQUEST);
       res.end();
     }
   }
@@ -56,13 +57,13 @@ export class SqlController {
     if (this.sqlService.checkSqlStatement(SQLTypes.DELETE, query)) {
       let data = await this.sqlService.executeSql(query).catch(err => {
         logger.error(`Error querying database: ${err}`);
-        res.status(500);
+        res.status(httpStatus.INTERNAL_SERVER_ERROR);
         res.end();
       });
-      if (data) res.json(data);
+      if (data) res.status(httpStatus.OK).json(data);
     } else {
       logger.error(`Error unsupported SQL Statement: ${query.substring(0, 6)}`);
-      res.status(501);
+      res.status(httpStatus.BAD_REQUEST);
       res.end();
     }
   }

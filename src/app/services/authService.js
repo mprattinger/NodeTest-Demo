@@ -1,15 +1,52 @@
-import * as jwt from "jsonwebtoken";
+import passport from "passport";
+import LocalStrategy from "passport-local";
+import { UserModel, UserRoles } from "../models/userModel";
+import { Strategy as JWTStrategy, ExtractJwt } from "passport-jwt";
 
-export class AuthService {
-  findByCredentials(username, password) {
-    if (username === "mprattinge" && password === "M_P2ttix") {
-      return true;
-    } else {
-      return false;
+//https://medium.com/@kris101/building-rest-api-in-nodejs-mongodb-passport-jwt-6c557332d4ca
+//https://github.com/krissnawat/nodejs-restapi/blob/ep-12/src/services/auth.services.js
+//https://solidgeargroup.com/refresh-token-with-jwt-authentication-node-js/
+
+const localOpts = {
+  usernameField: "name"
+};
+
+const localStrategy = new LocalStrategy(
+  localOpts,
+  async (name, password, done) => {
+    try {
+      var user = new UserModel();
+      user.userName = name;
+      if (name.toUpperCase() === "MPRATTINGE") {
+        user.role = UserRoles.ADMIN;
+      } else {
+        user.role = UserRoles.USER;
+      }
+      return done(null, user);
+    } catch (error) {
+      return done(null, false);
     }
   }
-  generateAuthToke(username) {
-    const token = jwt.sign({ _id: username }, process.env.JWT_KEY);
-    return token;
+);
+
+// Jwt strategy
+//jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme("authorization"),
+const jwtOpts = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: process.env.JWT_KEY
+};
+
+const jwtStrategy = new JWTStrategy(jwtOpts, async (payload, done) => {
+  try {
+    var user = new UserModel();
+    return done(null, user);
+  } catch (error) {
+    return done(error, false);
   }
-}
+});
+
+passport.use(localStrategy);
+passport.use(jwtStrategy);
+
+export const authLocal = passport.authenticate("local", { session: false });
+export const authJwt = passport.authenticate("jwt", { session: false });
