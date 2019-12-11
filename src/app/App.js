@@ -60,7 +60,7 @@ export class App {
         transports: [new winston.transports.Console()],
         format: winston.format.combine(
           winston.format.colorize(),
-          winston.format.simple() //winston.format.json()
+          winston.format.simple()
         ),
         meta: false, // optional: control whether you want to log the meta data about the request (default to true)
         msg:
