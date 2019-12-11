@@ -1,8 +1,6 @@
 import express from "express";
-import { logger } from "../logger";
-import { SqlService, SQLTypes } from "./services/SqlService";
+import { SqlService } from "./services/SqlService";
 import bodyParser from "body-parser";
-import { UserController } from "./controller/userController";
 import { MyRouter } from "./routes";
 import passport from "passport";
 import expressWinston from "express-winston";
@@ -11,7 +9,6 @@ import winston from "winston";
 export class App {
   constructor() {
     this.sqlService = new SqlService(false);
-    //this.uController = new UserController();
     this.express = express();
     this.router = express.Router();
     this.setupExpressLogging();
@@ -26,15 +23,15 @@ export class App {
       })
     );
 
-    this.express.use(function(req, res, next) {
+    this.express.use((req, res, next) => {
       if (req.headers["content-type"] === "text/plain") {
-        var data = "";
+        let data = "";
         req.setEncoding("utf8");
-        req.on("data", function(chunk) {
+        req.on("data", chunk => {
           data += chunk;
         });
 
-        req.on("end", function() {
+        req.on("end", () => {
           req.body = data;
           next();
         });
@@ -66,10 +63,7 @@ export class App {
         msg:
           "{{res.statusCode}} HTTP {{req.method}} {{req.url}} {{res.responseTime}}ms", // optional: customize the default logging message. E.g. "{{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}"
         expressFormat: false, // Use the default Express/morgan request formatting. Enabling this will override any msg if true. Will only output colors with colorize set to true
-        colorize: true, // Color the text and status code, using the Express/morgan color palette (text: gray, status: default green, 3XX cyan, 4XX yellow, 5XX red).
-        ignoreRoute: function(req, res) {
-          return false;
-        } // optional: allows to skip some log messages based on request and/or response
+        colorize: true // Color the text and status code, using the Express/morgan color palette (text: gray, status: default green, 3XX cyan, 4XX yellow, 5XX red).
       })
     );
   }
