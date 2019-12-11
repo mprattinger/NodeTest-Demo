@@ -1,5 +1,5 @@
 import passport from "passport";
-import localStragegy from "passport-local";
+import LocalStrategy from "passport-local";
 import { UserModel, UserRoles } from "../models/userModel";
 import { Strategy as JWTStrategy, ExtractJwt } from "passport-jwt";
 
@@ -11,7 +11,7 @@ const localOpts = {
   usernameField: "name"
 };
 
-const localStrategy = new localStragegy(
+const localStrategy = new LocalStrategy(
   localOpts,
   async (name, password, done) => {
     try {
@@ -30,8 +30,9 @@ const localStrategy = new localStragegy(
 );
 
 // Jwt strategy
+//jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme("authorization"),
 const jwtOpts = {
-  jwtFromRequest: ExtractJwt.fromAuthHeader("authorization"),
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: process.env.JWT_KEY
 };
 
@@ -44,7 +45,7 @@ const jwtStrategy = new JWTStrategy(jwtOpts, async (payload, done) => {
   }
 });
 
-passport.use(localStragegy);
+passport.use(localStrategy);
 passport.use(jwtStrategy);
 
 export const authLocal = passport.authenticate("local", { session: false });

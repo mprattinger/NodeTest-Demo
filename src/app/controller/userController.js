@@ -1,6 +1,7 @@
 import { UserModel, UserRoles } from "../models/userModel";
 import jsonwebtoken from "jsonwebtoken";
 import randToken from "rand-token";
+import httpStatus from "http-status";
 
 export class UserController {
   constructor() {
@@ -8,21 +9,20 @@ export class UserController {
   }
   add(req, res) {}
   login(req, res) {
-    let result = {};
-    let status = 200;
-    const { username, password } = req.body;
-    let user = {};
-    user.userName = username;
-    if (user.userName.toUpperCase() === "MPRATTINGE") {
-      user.role = UserRoles.ADMIN;
-    } else {
-      user.role = UserRoles.USER;
-    }
-    let token = jsonwebtoken.sign(user, process.env.JWT_KEY, {
-      expiresIn: 300
-    });
-    let refreshToken = randToken.uid(256);
-    this.refreshTokens[refreshToken] = username;
-    res.json({ token: "JWT " + token, refreshToken: refreshToken });
+    let user = req.user;
+    let id = user.userName + user.role;
+    let jwt = jsonwebtoken.sign(
+      {
+        _id: id
+      },
+      process.env.JWT_KEY,
+      { expiresIn: "5m" }
+    );
+    let auth = {
+      _id: id,
+      userName: user.userName,
+      token: `JWT ${jwt}`
+    };
+    res.status(httpStatus.OK).json(auth);
   }
 }

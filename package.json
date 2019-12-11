@@ -4,16 +4,17 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "start": "env-cmd -f ./.env node -r esm src/index.js",
-    "test": "env-cmd -f ./.env mocha tests/**/*.test.js --require esm"
+    "start": "env-cmd -f ./.envDev node -r esm src/index.js",
+    "test": "env-cmd -f ./.envTest mocha tests/**/*.test.js --require esm"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
+    "express-winston": "^4.0.1",
+    "http-status": "^1.4.2",
     "jsonwebtoken": "^8.5.1",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
