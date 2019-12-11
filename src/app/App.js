@@ -1,7 +1,7 @@
 import express from "express";
 import { SqlService } from "./services/SqlService";
 import bodyParser from "body-parser";
-import { MyRouter } from "./routes";
+import { AppRoutes } from "./routes";
 import passport from "passport";
 import expressWinston from "express-winston";
 import winston from "winston";
@@ -14,6 +14,7 @@ export class App {
     this.setupExpressLogging();
     this.express.use(passport.initialize());
     this.setupApi();
+    AppRoutes(this.express);
   }
 
   setupApi() {
@@ -46,8 +47,6 @@ export class App {
       })
     );
     this.express.use(bodyParser.json());
-
-    this.express.use("/api/v1", MyRouter(this.router));
   }
 
   setupExpressLogging() {

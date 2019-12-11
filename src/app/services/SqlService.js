@@ -1,22 +1,5 @@
 import { logger } from "../../logger";
-
-export class SQLTypes {
-  static get SELECT() {
-    return "select";
-  }
-
-  static get INSERT() {
-    return "insert";
-  }
-
-  static get UPDATE() {
-    return "update";
-  }
-
-  static get DELETE() {
-    return "delete";
-  }
-}
+import { SQLTypes } from "../models/sqlTypes";
 
 export class SqlService {
   constructor(pool) {
@@ -24,13 +7,14 @@ export class SqlService {
   }
 
   async executeSql(sql) {
+    this.pool = false;
     logger.info(`Requested to execute the sql statement ${sql}`);
-    const results = []; //const results = await this.pool.runSql(sql);
+    const results = []; // const results = await this.pool.runSql(sql);
     logger.debug(`SQL Query Result: ${JSON.stringify(results)}`);
     return results;
   }
 
-  checkSqlStatement(sqlType, query) {
+  static checkSqlStatement(sqlType, query) {
     let ret = false;
     switch (sqlType) {
       case SQLTypes.SELECT:

@@ -1,33 +1,36 @@
 import { SqlController } from "../controller/sqlController";
 import { authJwt } from "../services/authService";
+import { Router } from "express";
 
-export function SqlRoutes(router) {
+export function SqlRoutes() {
   const sqlController = new SqlController();
+  const routes = new Router();
   if (process.env.NODE_ENV === "test") {
-    router
-      .route("/sql/query")
-      .post(async (req, res) => await sqlController.query(req, res));
-    router
-      .route("/sql/insert")
-      .post(async (req, res) => await sqlController.insert(req, res));
-    router
-      .route("/sql/update")
-      .post(async (req, res) => await sqlController.update(req, res));
-    router
-      .route("/sql/delete")
-      .post(async (req, res) => await sqlController.delete(req, res));
+    routes.post("/insert", async (req, res) => {
+      await sqlController.insert(req, res);
+    });
+    routes.post("/query", async (req, res) => {
+      await sqlController.query(req, res);
+    });
+    routes.post("/update", async (req, res) => {
+      await sqlController.update(req, res);
+    });
+    routes.post("/delete", async (req, res) => {
+      await sqlController.delete(req, res);
+    });
   } else {
-    router
-      .route("/sql/query")
-      .post(authJwt, async (req, res) => await sqlController.query(req, res));
-    router
-      .route("/sql/insert")
-      .post(async (req, res) => await sqlController.insert(req, res));
-    router
-      .route("/sql/update")
-      .post(async (req, res) => await sqlController.update(req, res));
-    router
-      .route("/sql/delete")
-      .post(async (req, res) => await sqlController.delete(req, res));
+    routes.post("/insert", authJwt, async (req, res) => {
+      await sqlController.insert(req, res);
+    });
+    routes.post("/query", authJwt, async (req, res) => {
+      await sqlController.query(req, res);
+    });
+    routes.post("/update", authJwt, async (req, res) => {
+      await sqlController.update(req, res);
+    });
+    routes.post("/delete", authJwt, async (req, res) => {
+      await sqlController.delete(req, res);
+    });
   }
+  return routes;
 }

@@ -1,4 +1,5 @@
-import { SqlService, SQLTypes } from "../services/SqlService";
+import { SqlService } from "../services/SqlService";
+import { SQLTypes } from "../models/sqlTypes";
 import { logger } from "../../logger";
 import httpStatus from "http-status";
 
@@ -9,7 +10,7 @@ export class SqlController {
 
   async query(req, res) {
     const query = req.body;
-    if (this.sqlService.checkSqlStatement(SQLTypes.SELECT, query)) {
+    if (SqlService.checkSqlStatement(SQLTypes.SELECT, query)) {
       let data = await this.sqlService.executeSql(query).catch(err => {
         logger.error(`Error querying database: ${err}`);
         res.status(httpStatus.INTERNAL_SERVER_ERROR);
@@ -22,9 +23,10 @@ export class SqlController {
       res.end();
     }
   }
+
   async update(req, res) {
     const query = req.body;
-    if (this.sqlService.checkSqlStatement(SQLTypes.UPDATE, query)) {
+    if (SqlService.checkSqlStatement(SQLTypes.UPDATE, query)) {
       let data = await this.sqlService.executeSql(query).catch(err => {
         logger.error(`Error querying database: ${err}`);
         res.status(httpStatus.INTERNAL_SERVER_ERROR);
@@ -37,9 +39,10 @@ export class SqlController {
       res.end();
     }
   }
+
   async insert(req, res) {
     const query = req.body;
-    if (this.sqlService.checkSqlStatement(SQLTypes.INSERT, query)) {
+    if (SqlService.checkSqlStatement(SQLTypes.INSERT, query)) {
       let data = await this.sqlService.executeSql(query).catch(err => {
         logger.error(`Error querying database: ${err}`);
         res.status(httpStatus.INTERNAL_SERVER_ERROR);
@@ -52,9 +55,10 @@ export class SqlController {
       res.end();
     }
   }
+
   async delete(req, res) {
     const query = req.body;
-    if (this.sqlService.checkSqlStatement(SQLTypes.DELETE, query)) {
+    if (SqlService.checkSqlStatement(SQLTypes.DELETE, query)) {
       let data = await this.sqlService.executeSql(query).catch(err => {
         logger.error(`Error querying database: ${err}`);
         res.status(httpStatus.INTERNAL_SERVER_ERROR);
